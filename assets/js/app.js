@@ -191,6 +191,9 @@ function updateBar() {
   }
 
   msg.push("");
+  // Тип получения
+if (deliveryType === "pickup") msg.push("Тип: самовывоз");
+if (deliveryType === "delivery") msg.push("Тип: доставка");
   msg.push(address ? `Адрес: ${address}` : "Адрес: (не указан)");
 
   btn.href = `https://wa.me/${WA.phone}?text=${encodeURIComponent(msg.join("\n"))}`;
@@ -353,7 +356,11 @@ function sendCustomToWhatsApp() {
     "Цена: договорная",
     address ? `Адрес: ${address}` : "Адрес: (не указан)"
   ].join("\n");
+const typeLine =
+  deliveryType === "delivery" ? "Тип: доставка" :
+  deliveryType === "pickup" ? "Тип: самовывоз" : null;
 
+if (typeLine) msg.splice(msg.length - 1, 0, typeLine);
   const url = `https://wa.me/${WA.phone}?text=${encodeURIComponent(msg)}`;
   window.open(url, "_blank", "noopener,noreferrer");
 }
@@ -428,6 +435,11 @@ if (e.target.closest("#btnPickup")){
   updateDeliveryUI();
   updateBar();
   return;
+}
+if (!deliveryType) {
+  deliveryType = "pickup";
+  el("btnPickup")?.classList.add("active");
+  el("btnDelivery")?.classList.remove("active");
 }
 
 // Доставка
@@ -643,3 +655,4 @@ window.addEventListener("DOMContentLoaded", () => {
   showPage("pageHome");
   updateBar();
 });
+
